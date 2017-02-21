@@ -66,7 +66,7 @@ def attempt_combos(combos):
 			print "Success with combo '%s'." % combo
 			return
 
-	print "No luck."
+	print "No luck. Tried %d combinations." % len(combos)
 
 ################################################################################
 # Main                                                                         #
