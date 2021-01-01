@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+
 import os
 import sys
 import json
@@ -25,8 +27,7 @@ if len(sys.argv) != 2 and len(sys.argv) != 3:
 ################################################################################
 
 archive = sys.argv[1]
-#separator = sys.argv[2]
-separator = " "
+separator = sys.argv[2] if len(sys.argv) == 3 else " "
 
 ################################################################################
 # Function definitions                                                         #
