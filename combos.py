@@ -18,9 +18,9 @@ import subprocess
 ################################################################################
 
 if len(sys.argv) != 2 and len(sys.argv) != 3:
-	sys.stderr.write("Usage: python %s <archive> [separator]\n" % sys.argv[0])
-	sys.stderr.write("   Ex: python %s test.7z '|'\n" % sys.argv[0])
-	sys.exit(1)
+    sys.stderr.write("Usage: python %s <archive> [separator]\n" % sys.argv[0])
+    sys.stderr.write("   Ex: python %s test.7z '|'\n" % sys.argv[0])
+    sys.exit(1)
 
 ################################################################################
 # Global definitions                                                           #
@@ -34,45 +34,49 @@ separator = sys.argv[2] if len(sys.argv) == 3 else " "
 ################################################################################
 
 def prompt_words():
-	words = []
+    words = [ ]
 
-	word = True
-	while word:
-		word = getpass.getpass("Enter word (empty line to stop): ")
-		if word:
-			words.append(word)
-	
-	print "Read %d words.\n" % len(words)
-	
-	return words
+    word = True
+    while word:
+        try:
+            word = getpass.getpass("Enter word (empty line to stop): ")
+        except Exception as error:
+            print('ERROR', error)
+        else:
+            if word:
+                words.append(word)
+    
+    print "Read %d words.\n" % len(words)
+    
+    return words
 
 def enumerate_combos():
-	combos = [ ]
+    combos = [ ]
 
-	words = prompt_words()
-	for x in range(0, len(words)):
-		for combo in itertools.combinations(words, x + 1):
-			for perm in itertools.permutations(list(combo)):
-				combos.append(separator.join(perm))
+    words = prompt_words()
+    for x in range(0, len(words)):
+        for combo in itertools.combinations(words, x + 1):
+            for perm in itertools.permutations(list(combo)):
+                combos.append(separator.join(perm))
 
-	print "Enumerated %d combinations.\n" % len(combos)
-	
-	return combos
+    print "Enumerated %d combinations.\n" % len(combos)
+    
+    return combos
 
 def attempt_combos(combos):
-	attempt = 0
-	FNULL = open(os.devnull, 'w')
-	for combo in combos:
-		attempt += 1
-		if attempt % 25 == 0:
-			print "Attempt %d" % attempt
-		command = [ "7z", "t", "-p%s" % combo, archive ]
-		rc = subprocess.call(command, stdout=FNULL, stderr=FNULL)
-		if not rc:
-			print "Success with combo '%s'." % combo
-			return
+    attempt = 0
+    FNULL = open(os.devnull, 'w')
+    for combo in combos:
+        attempt += 1
+        if attempt % 25 == 0:
+            print "Attempt %d" % attempt
+        command = [ "7z", "t", "-p%s" % combo, archive ]
+        rc = subprocess.call(command, stdout=FNULL, stderr=FNULL)
+        if not rc:
+            print "Success with combo '%s'." % combo
+            return
 
-	print "No luck. Tried %d combinations." % len(combos)
+    print "No luck. Tried %d combinations." % len(combos)
 
 def dump_combos(combos):
     print "Dumping combos...\n"
@@ -85,5 +89,5 @@ def dump_combos(combos):
 ################################################################################
 
 combos = enumerate_combos()
-dump_combos(combos)
+#dump_combos(combos)
 attempt_combos(combos)
